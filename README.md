@@ -5,4 +5,4 @@
 - Ricky Septianto
 - Rizky Amanda
 - Fauzi Nur Hanif
-- Diki Ruhimat
+- M Zidan Z
