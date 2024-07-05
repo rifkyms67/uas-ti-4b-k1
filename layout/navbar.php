@@ -11,7 +11,6 @@
     </ul>
   </div>
 </nav>
-<section id="beranda">Beranda</section>
 <div class="button">
   <a href="#beranda"><i class="fas fa-arrow-up"></i></a>
 </div>
