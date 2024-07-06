@@ -1,0 +1,35 @@
+Tugas WEB Perpustakaan
+
+Beranda
+Bibliography
+- CRUD Buku 
+- - Id 
+- - Judul
+- - Category 
+- - Author
+- - Status (Dipinjam atau Tidak)
+
+Sirkulasi
+- Peminjaman 
+- - Id 
+- - Judul
+- - Category 
+- - Author
+- - Stok Buku
+- - NIM
+- - Nama
+- - Tanggal Peminjaman
+- - Tombol Peminjaman
+
+
+- Pengembalian 
+- History Pengembalian
+- - Id 
+- - Judul
+- - Category 
+- - Author
+- - Stok Buku
+- - NIM
+- - Nama
+- - Tanggal Peminjaman
+- - Tanggal Pengembalian 
