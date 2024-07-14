@@ -49,9 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_book_id'])) {
     <link rel="stylesheet" href="./public/style.css">
 </head>
 <body>
-    <?php
-      include 'layout/navbar.php'
-    ?>
     <div class="container mt-5" style="margin-top: 100px !important;">
         <div class="row justify-content-center">
             <div class="col-md-10">

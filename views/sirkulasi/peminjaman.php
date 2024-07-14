@@ -1,12 +1,13 @@
-<!-- Form -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Peminjaman Buku</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
-        /* Style untuk tampilan dropdown */
+        /* Custom styles */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -35,93 +36,110 @@
     </style>
 </head>
 <body>
-    <h2>Form Peminjaman Buku</h2>
-    <div class="dropdown">
-        <button onclick="toggleDropdown('bukuDropdown')">Pilih Buku</button>
-        <div id="bukuDropdown" class="dropdown-content">
-            <input type="text" placeholder="Cari buku.." onkeyup="searchDropdown('bukuDropdown', 'bukuSearch')">
-            <?php
-            // Kode PHP untuk mengambil data buku dari database
-            $servername = "localhost"; // Ganti dengan nama server database Anda
-            $username = "root"; // Ganti dengan username database Anda
-            $password = ""; // Ganti dengan password database Anda
-            $dbname = "uasdb"; // Ganti dengan nama database Anda
+    <div class="container mt-5">
+        <h2 class="mb-4">Form Peminjaman Buku</h2>
 
-            // Membuat koneksi
-            $conn = new mysqli($servername, $username, $password, $dbname);
+        <!-- Dropdown for selecting book -->
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" onclick="toggleDropdown('bukuDropdown')">Pilih Buku</button>
+            <div id="bukuDropdown" class="dropdown-content">
+                <input type="text" class="form-control mb-2" id="bukuSearch" placeholder="Cari buku.." onkeyup="searchDropdown('bukuDropdown', 'bukuSearch')">
+                <?php
+                // PHP code to fetch book data from database
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+                $dbname = "uasdb";
 
-            // Query untuk mengambil data buku
-            $sql_buku = "SELECT id, title FROM books";
-            $result_buku = $conn->query($sql_buku);
+                $conn = new mysqli($servername, $username, $password, $dbname);
 
-            if ($result_buku->num_rows > 0) {
-                while($row_buku = $result_buku->fetch_assoc()) {
-                    echo "<a href='#' onclick='selectItem(\"" . $row_buku["title"] . "\", \"books\")'>" . $row_buku["title"] . "</a>";
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
                 }
-            } else {
-                echo "Tidak ada data buku.";
-            }
 
-            // Menutup koneksi database
-            $conn->close();
-            ?>
-        </div>
-    </div>
-    <br><br>
+                $sql_buku = "SELECT id_book, title FROM books";
+                $result_buku = $conn->query($sql_buku);
 
-    <div class="dropdown">
-        <button onclick="toggleDropdown('peminjamDropdown')">Pilih Peminjam</button>
-        <div id="peminjamDropdown" class="dropdown-content">
-            <input type="text" placeholder="Cari peminjam.." onkeyup="searchDropdown('peminjamDropdown', 'peminjamSearch')">
-            <?php
-            // Kode PHP untuk mengambil data peminjam dari database
-            // Anda bisa mengganti koneksi dan query berdasarkan struktur database Anda
-            $conn = new mysqli($servername, $username, $password, $dbname);
-
-            // Query untuk mengambil data peminjam
-            $sql_peminjam = "SELECT id, nama FROM users";
-            $result_peminjam = $conn->query($sql_peminjam);
-
-            if ($result_peminjam->num_rows > 0) {
-                while($row_peminjam = $result_peminjam->fetch_assoc()) {
-                    echo "<a href='#' onclick='selectItem(\"" . $row_peminjam["nama"] . "\", \"users\")'>" . $row_peminjam["nama"] . "</a>";
+                if ($result_buku->num_rows > 0) {
+                    while($row_buku = $result_buku->fetch_assoc()) {
+                        echo "<a href='#' class='dropdown-item' onclick='selectItem(\"" . $row_buku["title"] . "\", \"books\")'>" . $row_buku["title"] . "</a>";
+                    }
+                } else {
+                    echo "Tidak ada data buku.";
                 }
-            } else {
-                echo "Tidak ada data peminjam.";
-            }
 
-            // Menutup koneksi database
-            $conn->close();
-            ?>
+                $conn->close();
+                ?>
+            </div>
         </div>
+        <div id="selectedBookText"></div> <!-- Container for selected book -->
+
+        <br><br>
+
+        <!-- Dropdown for selecting borrower -->
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" onclick="toggleDropdown('peminjamDropdown')">Pilih Peminjam</button>
+            <div id="peminjamDropdown" class="dropdown-content">
+                <input type="text" class="form-control mb-2" id="peminjamSearch" placeholder="Cari peminjam.." onkeyup="searchDropdown('peminjamDropdown', 'peminjamSearch')">
+                <?php
+                // PHP code to fetch borrower data from database
+                $conn = new mysqli($servername, $username, $password, $dbname);
+
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                $sql_peminjam = "SELECT id_user, nama FROM users";
+                $result_peminjam = $conn->query($sql_peminjam);
+
+                if ($result_peminjam->num_rows > 0) {
+                    while($row_peminjam = $result_peminjam->fetch_assoc()) {
+                        echo "<a href='#' class='dropdown-item' onclick='selectItem(\"" . $row_peminjam["nama"] . "\", \"users\")'>" . $row_peminjam["nama"] . "</a>";
+                    }
+                } else {
+                    echo "Tidak ada data peminjam.";
+                }
+
+                $conn->close();
+                ?>
+            </div>
+        </div>
+        <div id="selectedPeminjamText"></div> <!-- Container for selected peminjam -->
+
+        <br><br>
+
+        <!-- Form for borrowing -->
+        <form action="proses_peminjaman.php" method="POST">
+            <input type="hidden" id="selectedBuku" name="selectedBuku">
+            <input type="hidden" id="selectedPeminjam" name="selectedPeminjam">
+
+            <div class="form-group">
+                <label for="tanggal_pinjam">Tanggal Pinjam:</label>
+                <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Pinjam Buku</button>
+        </form>
     </div>
-    <br><br>
 
-    <form action="proses_peminjaman.php" method="POST">
-        <input type="hidden" id="selectedBuku" name="selectedBuku">
-        <input type="hidden" id="selectedPeminjam" name="selectedPeminjam">
-
-        <label for="tanggal_pinjam">Tanggal Pinjam:</label>
-        <input type="date" id="tanggal_pinjam" name="tanggal_pinjam"><br><br>
-
-        <input type="submit" value="Pinjam Buku">
-    </form>
-
+    <!-- Bootstrap JS and custom script -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script>
-        // Fungsi untuk menampilkan atau menyembunyikan dropdown
+        // JavaScript functions for dropdown functionality
         function toggleDropdown(id) {
-            document.getElementById(id).classList.toggle("show");
+            var dropdown = document.getElementById(id);
+            dropdown.classList.toggle("show");
         }
 
-        // Fungsi untuk pencarian dalam dropdown
         function searchDropdown(dropdownId, inputId) {
-            var filter, dropdown, items, a, i, txtValue;
-            filter = document.getElementById(inputId).value.toUpperCase();
-            dropdown = document.getElementById(dropdownId);
-            items = dropdown.getElementsByTagName("a");
-            for (i = 0; i < items.length; i++) {
-                a = items[i];
-                txtValue = a.textContent || a.innerText;
+            var filter = document.getElementById(inputId).value.toUpperCase();
+            var dropdown = document.getElementById(dropdownId);
+            var items = dropdown.getElementsByTagName("a");
+
+            for (var i = 0; i < items.length; i++) {
+                var txtValue = items[i].textContent || items[i].innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
                     items[i].style.display = "";
                 } else {
@@ -130,14 +148,15 @@
             }
         }
 
-        // Fungsi untuk memilih item dari dropdown
         function selectItem(value, type) {
             if (type === "books") {
                 document.getElementById("selectedBuku").value = value;
-                document.getElementById("bukuDropdown").classList.remove("show");
+                document.getElementById("selectedBookText").innerHTML = "<p>Buku dipilih: " + value + "</p>";
+                toggleDropdown('bukuDropdown'); // Close the dropdown after selection
             } else if (type === "users") {
                 document.getElementById("selectedPeminjam").value = value;
-                document.getElementById("peminjamDropdown").classList.remove("show");
+                document.getElementById("selectedPeminjamText").innerHTML = "<p>Peminjam dipilih: " + value + "</p>";
+                toggleDropdown('peminjamDropdown'); // Close the dropdown after selection
             }
         }
     </script>
