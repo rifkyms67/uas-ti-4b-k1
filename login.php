@@ -1,32 +1,4 @@
-<?php
-
-require_once 'utils/config.php';
-
-session_start();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $query = "SELECT * FROM users WHERE username = ?";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$username]);
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role'] = $user['role'];
-        if ($user['role'] == 'admin') {
-            header('Location: admin_dashboard.php');
-        } else {
-            header('Location: user_dashboard.php');
-        }
-        exit;
-    } else {
-        $error = "Invalid username or password";
-    }
-}
-?>
+<!-- views/login.php -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,26 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2>Login</h2>
-                <?php if (isset($error)): ?>
-                    <div class="alert alert-danger"><?php echo $error; ?></div>
-                <?php endif; ?>
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
-            </div>
+<body class="w-100 d-flex align-items-center" style="height: 100vh;">
+    <div class="container-fluid">
+        <h2 class="text-center">LOGIN</h2>
+        <div class="d-flex justify-content-center">
+            <form action="index.php?action=login" method="post" class="p-4 m-2 border border-1 rounded-lg shadow-lg">
+                <label for="username">Username:</label><br>
+                <input class="form-control mb-1" type="text" id="username" name="username" required>
+                <label for="password">Password:</label><br>
+                <input class="form-control mb-4" type="password" id="password" name="password" required>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
         </div>
     </div>
 </body>
