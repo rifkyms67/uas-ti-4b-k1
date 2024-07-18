@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "uas_perpus_db";
+$dbname = "uas-db-perpus";
 
 // Buat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
